@@ -1,53 +1,51 @@
-#include <CosineFilter.h>
+#include "CosineFilter.h"
 
 void CosineFilter_Init(CosineFilter* cosineFilter)
 {
-    for (int i = 0; i < FILTER_SIZE; i++)
+    for (int i = 0; i < COSINE_FILTER_SIZE; i++)
     {
         cosineFilter->real[i] = 0;
         cosineFilter->imag[i] = 0;
     }
-    SlidingBuffer_Init(&cosineFilter->input_buffer);
-}
-void CosineFilter_Evaluate(CosineFilter* cosineFilter, float newSample)
-{
-    SlidingBuffer_Write(&cosineFilter->input_buffer, newSample);
 
-    for (int h = 0; h < FILTER_SIZE; h++)
+    for (int h = 0; h < COSINE_FILTER_SIZE; h++)
+    {
+        for (int n = 0; n < COSINE_FILTER_SIZE; n++)
+        {
+            cosineFilter->cos[h * COSINE_FILTER_SIZE + n] = cosf((2 * M_PI * h * n) / COSINE_FILTER_SIZE);
+        }
+    }
+}
+
+void CosineFilter_Evaluate(CosineFilter* cosineFilter, float* input, uint32_t inputSize)
+{
+    if (inputSize > COSINE_FILTER_SIZE)
+    {
+        inputSize = COSINE_FILTER_SIZE;
+    }
+
+    for (int h = 0; h < COSINE_FILTER_SIZE; h++)
     {
         float real = 0;
         float imag = 0;
 
-        for (int n = 0; n < FILTER_SIZE; n++)
+        for (int n = 0; n < COSINE_FILTER_SIZE; n++)
         {
-            real += SlidingBuffer_Read(&cosineFilter->input_buffer, n) * cosf((2 * M_PI * h * n) / FILTER_SIZE);
-            imag += SlidingBuffer_Read(&cosineFilter->input_buffer, (n + FILTER_SIZE / 4)) * cosf((2 * M_PI * h * n) / FILTER_SIZE);
+            real += input[n] * cosineFilter->cos[h * COSINE_FILTER_SIZE + n];
+            imag += input[n + COSINE_FILTER_SIZE / 4] * cosineFilter->cos[h * COSINE_FILTER_SIZE + n];
         }
 
-        cosineFilter->real[h] = 2 * real / FILTER_SIZE;
-        cosineFilter->imag[h] = -2 * imag / FILTER_SIZE;
+        cosineFilter->real[h] = 2 * real / COSINE_FILTER_SIZE;
+        cosineFilter->imag[h] = -2 * imag / COSINE_FILTER_SIZE;
     }
 }
 
-float CosineFilter_GetReal(CosineFilter* cosineFilter, uint32_t harmonicIndex)
+float CosineFilter_GetMag(CosineFilter* cosineFilter, uint32_t index)
 {
-    return cosineFilter->real[harmonicIndex];
+    return sqrtf(powf(cosineFilter->real[index], 2) + powf(cosineFilter->imag[index], 2));
 }
 
-float CosineFilter_GetImag(CosineFilter* cosineFilter, uint32_t harmonicIndex)
+float CosineFilter_GetPhase(CosineFilter* cosineFilter, uint32_t index)
 {
-    return cosineFilter->imag[harmonicIndex];
-}
-
-float CosineFilter_GetMagnitude(CosineFilter* cosineFilter, uint32_t harmonicIndex)
-{
-    return sqrtf(
-        powf(CosineFilter_GetReal(cosineFilter, harmonicIndex), 2) 
-        + powf(CosineFilter_GetImag(cosineFilter, harmonicIndex), 2)
-        );
-}
-
-float CosineFilter_GetPhase(CosineFilter* cosineFilter, uint32_t harmonicIndex)
-{
-    return atanf(CosineFilter_GetImag(cosineFilter, harmonicIndex) / CosineFilter_GetReal(cosineFilter, harmonicIndex));
+    return atanf(cosineFilter->imag[index] / cosineFilter->real[index]);
 }

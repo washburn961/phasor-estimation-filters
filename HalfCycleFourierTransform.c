@@ -1,53 +1,59 @@
-#include <HalfCycleFourierTransform.h>
+#include "HalfCycleFourierTransform.h"
 
 void HalfCycleFourierTransform_Init(HalfCycleFourierTransform* halfCycleFourierTransform)
 {
-    for (int i = 0; i < FILTER_SIZE; i++)
+    for (int i = 0; i < HCDFT_SIZE; i++)
     {
         halfCycleFourierTransform->real[i] = 0;
         halfCycleFourierTransform->imag[i] = 0;
     }
-    SlidingBuffer_Init(&halfCycleFourierTransform->input_buffer);
-}
-void HalfCycleFourierTransform_Evaluate(HalfCycleFourierTransform* halfCycleFourierTransform, float newSample)
-{
-    SlidingBuffer_Write(&halfCycleFourierTransform->input_buffer, newSample);
 
-    for (int h = 0; h < FILTER_SIZE; h++)
+    for (int h = 0; h < HCDFT_SIZE; h++)
+    {
+        for (int n = 0; n < HCDFT_SIZE / 2; n++)
+        {
+            halfCycleFourierTransform->sin[h * HCDFT_SIZE / 2 + n] = sinf((2 * M_PI * h * n) / HCDFT_SIZE);
+            halfCycleFourierTransform->cos[h * HCDFT_SIZE / 2 + n] = cosf((2 * M_PI * h * n) / HCDFT_SIZE);
+        }
+    }
+}
+void HalfCycleFourierTransform_Evaluate(HalfCycleFourierTransform* halfCycleFourierTransform, float* input, uint32_t inputSize)
+{
+    if (inputSize > HCDFT_SIZE)
+    {
+        inputSize = HCDFT_SIZE;
+    }
+
+    for (int h = 0; h < HCDFT_SIZE; h++)
     {
         float real = 0;
         float imag = 0;
 
-        for (int n = FILTER_SIZE / 2; n < FILTER_SIZE; n++)
+        for (int n = 0; n < HCDFT_SIZE / 2; n++)
         {
-            real += SlidingBuffer_Read(&halfCycleFourierTransform->input_buffer, n) * cosf((2 * M_PI * h * n) / FILTER_SIZE);
-            imag += SlidingBuffer_Read(&halfCycleFourierTransform->input_buffer, n) * sinf((2 * M_PI * h * n) / FILTER_SIZE);
+            real += input[n] * halfCycleFourierTransform->cos[h * HCDFT_SIZE / 2 + n];
+            imag += input[n] * halfCycleFourierTransform->sin[h * HCDFT_SIZE / 2 + n];
         }
 
-        halfCycleFourierTransform->real[h] = 4 * real / FILTER_SIZE;
-        halfCycleFourierTransform->imag[h] = -4 * imag / FILTER_SIZE;
+        halfCycleFourierTransform->real[h] = 4 * real / HCDFT_SIZE;
+        halfCycleFourierTransform->imag[h] = -4 * imag / HCDFT_SIZE;
     }
 }
 
-float HalfCycleFourierTransform_GetReal(HalfCycleFourierTransform* halfCycleFourierTransform, uint32_t harmonicIndex)
+float HalfCycleFourierTransform_GetMag(HalfCycleFourierTransform* halfCycleFourierTransform, uint32_t index)
 {
-    return halfCycleFourierTransform->real[harmonicIndex];
+    return sqrtf(powf(halfCycleFourierTransform->real[index], 2) + powf(halfCycleFourierTransform->imag[index], 2));
 }
 
-float HalfCycleFourierTransform_GetImag(HalfCycleFourierTransform* halfCycleFourierTransform, uint32_t harmonicIndex)
+float HalfCycleFourierTransform_GetPhase(HalfCycleFourierTransform* halfCycleFourierTransform, uint32_t index)
 {
-    return halfCycleFourierTransform->imag[harmonicIndex];
+    return atanf(halfCycleFourierTransform->imag[index] / halfCycleFourierTransform->real[index]);
 }
 
-float HalfCycleFourierTransform_GetMagnitude(HalfCycleFourierTransform* halfCycleFourierTransform, uint32_t harmonicIndex)
+void HalfCycleFourierTransform_GetMagBin(HalfCycleFourierTransform* halfCycleFourierTransform, float* out_magBin)
 {
-    return sqrtf(
-        powf(HalfCycleFourierTransform_GetReal(halfCycleFourierTransform, harmonicIndex), 2) 
-        + powf(HalfCycleFourierTransform_GetImag(halfCycleFourierTransform, harmonicIndex), 2)
-        );
-}
-
-float HalfCycleFourierTransform_GetPhase(HalfCycleFourierTransform* halfCycleFourierTransform, uint32_t harmonicIndex)
-{
-    return atanf(HalfCycleFourierTransform_GetImag(halfCycleFourierTransform, harmonicIndex) / HalfCycleFourierTransform_GetReal(halfCycleFourierTransform, harmonicIndex));
+    for (uint32_t i = 0; i < HCDFT_SIZE; i++)
+    {
+        out_magBin[i] = HalfCycleFourierTransform_GetMag(halfCycleFourierTransform, i);
+    }
 }

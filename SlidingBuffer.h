@@ -34,7 +34,7 @@
 #include <math.h>
 
 #ifndef BUFFER_SIZE
-#define BUFFER_SIZE 20
+#define BUFFER_SIZE 32
 #endif
 
 #ifndef SLIDING_BUFFER
@@ -46,10 +46,12 @@ typedef struct
     uint32_t head;
     uint32_t tail;
     uint32_t isFull;
+    uint32_t size;
 } SlidingBuffer;
 
 void SlidingBuffer_Init(SlidingBuffer* buffer);
 void SlidingBuffer_Write(SlidingBuffer* buffer, float data);
 float SlidingBuffer_Read(SlidingBuffer* buffer, uint32_t index);
+void SlidingBuffer_GetSamples(SlidingBuffer* buffer, float* out, uint32_t outSize);
 
 #endif

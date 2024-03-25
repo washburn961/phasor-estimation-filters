@@ -32,30 +32,28 @@
 
 #ifndef FOURIER_TRANSFORM
 #define FOURIER_TRANSFORM
-#endif
 
-#ifndef FILTER_SIZE
-#define FILTER_SIZE 16
+#ifndef DFT_SIZE
+#define DFT_SIZE 16
 #endif
 
 #define _USE_MATH_DEFINES
 
-#define BUFFER_SIZE (FILTER_SIZE + FILTER_SIZE / 4)
-
-#include <SlidingBuffer.h>
 #include <stdint.h>
 #include <math.h>
 
 typedef struct
 {
-    float real[FILTER_SIZE];
-    float imag[FILTER_SIZE];
-    SlidingBuffer input_buffer;
+    float real[DFT_SIZE];
+    float imag[DFT_SIZE];
+    float sin[DFT_SIZE * DFT_SIZE];
+    float cos[DFT_SIZE * DFT_SIZE];
 } FourierTransform;
 
 void FourierTransform_Init(FourierTransform* fourierTransform);
-void FourierTransform_Evaluate(FourierTransform* fourierTransform, float newSample);
-float FourierTransform_GetReal(FourierTransform* fourierTransform, uint32_t harmonicIndex);
-float FourierTransform_GetImag(FourierTransform* fourierTransform, uint32_t harmonicIndex);
-float FourierTransform_GetMagnitude(FourierTransform* fourierTransform, uint32_t harmonicIndex);
-float FourierTransform_GetPhase(FourierTransform* fourierTransform, uint32_t harmonicIndex);
+void FourierTransform_Evaluate(FourierTransform* fourierTransform, float* input, uint32_t inputSize);
+float FourierTransform_GetMag(FourierTransform* fourierTransform, uint32_t index);
+float FourierTransform_GetPhase(FourierTransform* fourierTransform, uint32_t index);
+void FourierTransform_GetMagBin(FourierTransform* fourierTransform, float* out_magBin);
+
+#endif

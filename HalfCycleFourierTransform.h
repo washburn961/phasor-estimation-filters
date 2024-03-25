@@ -21,44 +21,39 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  * 
- * The HalfCycleFourierTransform library offers a specialized approach to Fourier
- * transform analysis by focusing on half-cycle signal segments. This method is
- * particularly useful in applications requiring precise frequency resolution over
- * shorter time windows, such as in electrical engineering and signal processing.
- * It employs a sliding window buffer to continuously update and process signal
- * data, calculating real and imaginary parts, magnitude, and phase for each
- * harmonic component within the half-cycle window. This enables detailed
- * harmonic analysis in real-time applications, supporting dynamic signal
- * analysis with high temporal resolution.
+ * This library provides an implementation of the Fourier Transform for signal analysis,
+ * specifically designed to work with a sliding window buffer for continuous signal input.
+ * It allows for the efficient computation of the real and imaginary components, magnitude,
+ * and phase of the signal's harmonics. This is particularly useful in digital signal processing
+ * applications, where analyzing the frequency components of a signal is crucial. The library
+ * integrates with a sliding buffer mechanism, facilitating the analysis of streaming data by
+ * maintaining a dynamic, cyclical buffer of the most recent samples for transformation.
  */
-
 
 #ifndef HALF_CYCLE_FOURIER_TRANSFORM
 #define HALF_CYCLE_FOURIER_TRANSFORM
-#endif
 
-#ifndef FILTER_SIZE
-#define FILTER_SIZE 16
+#ifndef HCDFT_SIZE
+#define HCDFT_SIZE 16
 #endif
 
 #define _USE_MATH_DEFINES
 
-#define BUFFER_SIZE (FILTER_SIZE + FILTER_SIZE / 4)
-
-#include <SlidingBuffer.h>
 #include <stdint.h>
 #include <math.h>
 
 typedef struct
 {
-    float real[FILTER_SIZE];
-    float imag[FILTER_SIZE];
-    SlidingBuffer input_buffer;
+    float real[HCDFT_SIZE];
+    float imag[HCDFT_SIZE];
+    float sin[(HCDFT_SIZE) * (HCDFT_SIZE / 2)];
+    float cos[(HCDFT_SIZE) * (HCDFT_SIZE / 2)];
 } HalfCycleFourierTransform;
 
-void HalfCycleFourierTransform_Init(HalfCycleFourierTransform* halfCycleFourierTransform);
-void HalfCycleFourierTransform_Evaluate(HalfCycleFourierTransform* halfCycleFourierTransform, float newSample);
-float HalfCycleFourierTransform_GetReal(HalfCycleFourierTransform* halfCycleFourierTransform, uint32_t harmonicIndex);
-float HalfCycleFourierTransform_GetImag(HalfCycleFourierTransform* halfCycleFourierTransform, uint32_t harmonicIndex);
-float HalfCycleFourierTransform_GetMagnitude(HalfCycleFourierTransform* halfCycleFourierTransform, uint32_t harmonicIndex);
-float HalfCycleFourierTransform_GetPhase(HalfCycleFourierTransform* halfCycleFourierTransform, uint32_t harmonicIndex);
+void HalfCycleFourierTransform_Init(HalfCycleFourierTransform* fourierTransform);
+void HalfCycleFourierTransform_Evaluate(HalfCycleFourierTransform* fourierTransform, float* input, uint32_t inputSize);
+float HalfCycleFourierTransform_GetMag(HalfCycleFourierTransform* fourierTransform, uint32_t index);
+float HalfCycleFourierTransform_GetPhase(HalfCycleFourierTransform* fourierTransform, uint32_t index);
+void HalfCycleFourierTransform_GetMagBin(HalfCycleFourierTransform* fourierTransform, float* out_magBin);
+
+#endif
