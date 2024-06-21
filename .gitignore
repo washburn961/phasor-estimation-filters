@@ -34,6 +34,7 @@ bld/
 # /build/
 
 # Visual Studio 2019/2022
+.out/
 .vs/
 .vscode/
 .vscode/*
