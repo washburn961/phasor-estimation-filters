@@ -1,8 +1,11 @@
 # ninja log v5
-18	105	7406983183991032	phasorfilters/CMakeFiles/phasorfilters.dir/src/phasorfilters.c.obj	5cb0724ab2f4b7d0
-7	363	7407034594844678	CMakeFiles/main.dir/main.c.obj	dcffe3d5f85a0e1
-31	507	7407010562642790	gnuplot_i/CMakeFiles/gnuplot_i.dir/src/gnuplot_i.c.obj	174768bfa03cf579
-106	206	7406983184923649	phasorfilters/phasorfilters.lib	c8c623bfb341a78d
-2	35	0	clean	8c45b54705a541e8
-509	836	7407010565202267	gnuplot_i/gnuplot_i.lib	40fd50c31f09874a
-533	1365	7407034603139602	main.exe	4c085d36c7134095
+19	130	7407138329408283	phasorfilters/CMakeFiles/phasorfilters.dir/src/half_cycle_fourier_transform.c.obj	4bb71bb505ec8914
+23	134	7407138329508290	phasorfilters/CMakeFiles/phasorfilters.dir/src/ring_buffer.c.obj	52601f25031a10b4
+29	155	7407138329808291	phasorfilters/CMakeFiles/phasorfilters.dir/src/sine_filter.c.obj	202475ca5c36e9c3
+14	137	7407138329508290	phasorfilters/CMakeFiles/phasorfilters.dir/src/fourier_transform.c.obj	3dfcd56e79454fe8
+162	253	7407138330508277	gnuplot_i/gnuplot_i.lib	83d8072d54635f10
+10	150	7407138329608278	phasorfilters/CMakeFiles/phasorfilters.dir/src/cosine_filter.c.obj	7617596672899c25
+5	161	7407138329808291	CMakeFiles/main.dir/main.c.obj	c19b8d646cc931bb
+40	162	7407138329808291	gnuplot_i/CMakeFiles/gnuplot_i.dir/src/gnuplot_i.c.obj	be0742c0380ed20e
+155	255	7407138330508277	phasorfilters/phasorfilters.lib	13abc5470a51182c
+255	564	7407138333608300	main.exe	ffd54e7d5f54038a

@@ -1,8 +1,8 @@
-# Install script for directory: C:/Users/223105796/source/repos/phasor-estimation-filters/gnuplot_i
+# Install script for directory: C:/Users/Gabriel/source/repos/washburn961/phasor-estimation-filters/gnuplot_i
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "C:/Users/223105796/source/repos/phasor-estimation-filters/out/install/x64-debug")
+  set(CMAKE_INSTALL_PREFIX "C:/Users/Gabriel/Source/Repos/washburn961/phasor-estimation-filters/out/install/x64-debug")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 

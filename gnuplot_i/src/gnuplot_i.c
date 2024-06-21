@@ -34,16 +34,26 @@ void gnuplot_plot_xy(const float* x, const float* y, int n, const char* title, c
     gnuplot_init();
 
     // Set up gnuplot commands to plot the data from the temporary file
-    gnuplot_cmd("set terminal png");                // Set the terminal type to PNG
-    gnuplot_cmd("set output 'vector_plot.png'");    // Set the output file
-    gnuplot_cmd("set title 'Vector Plot'");         // Set the title of the plot
-    gnuplot_cmd("set xlabel 'x'");                  // Set the label for the x-axis
-    gnuplot_cmd("set ylabel 'y'");                  // Set the label for the y-axis
-    gnuplot_cmd("plot 'data.tmp' with lines");      // Plot the data from the temporary file
+    char cmd[256];
+
+    snprintf(cmd, sizeof(cmd), "set terminal png");
+    gnuplot_cmd(cmd);
+
+    snprintf(cmd, sizeof(cmd), "set output '%s'", output_file);
+    gnuplot_cmd(cmd);
+
+    snprintf(cmd, sizeof(cmd), "set title '%s'", title);
+    gnuplot_cmd(cmd);
+
+    snprintf(cmd, sizeof(cmd), "set xlabel 'x'");
+    gnuplot_cmd(cmd);
+
+    snprintf(cmd, sizeof(cmd), "set ylabel 'y'");
+    gnuplot_cmd(cmd);
+
+    snprintf(cmd, sizeof(cmd), "plot 'data.tmp' with lines");
+    gnuplot_cmd(cmd);
 
     // Close gnuplot
     gnuplot_close();
-
-    // Open the generated PNG file with the default image viewer
-    system("start vector_plot.png");
 }

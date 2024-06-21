@@ -1,8 +1,8 @@
-# Install script for directory: C:/Users/223105796/source/repos/phasor-estimation-filters
+# Install script for directory: C:/Users/Gabriel/source/repos/washburn961/phasor-estimation-filters
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "C:/Users/223105796/source/repos/phasor-estimation-filters/out/install/x86-debug")
+  set(CMAKE_INSTALL_PREFIX "C:/Users/Gabriel/Source/Repos/washburn961/phasor-estimation-filters/out/install/x86-debug")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -34,8 +34,8 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("C:/Users/223105796/source/repos/phasor-estimation-filters/out/build/x86-debug/phasorfilters/cmake_install.cmake")
-  include("C:/Users/223105796/source/repos/phasor-estimation-filters/out/build/x86-debug/gnuplot_i/cmake_install.cmake")
+  include("C:/Users/Gabriel/source/repos/washburn961/phasor-estimation-filters/out/build/x86-debug/phasorfilters/cmake_install.cmake")
+  include("C:/Users/Gabriel/source/repos/washburn961/phasor-estimation-filters/out/build/x86-debug/gnuplot_i/cmake_install.cmake")
 
 endif()
 
@@ -47,5 +47,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "C:/Users/223105796/source/repos/phasor-estimation-filters/out/build/x86-debug/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "C:/Users/Gabriel/source/repos/washburn961/phasor-estimation-filters/out/build/x86-debug/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
