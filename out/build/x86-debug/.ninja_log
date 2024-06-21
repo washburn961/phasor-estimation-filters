@@ -1,0 +1,8 @@
+# ninja log v5
+18	105	7406983183991032	phasorfilters/CMakeFiles/phasorfilters.dir/src/phasorfilters.c.obj	5cb0724ab2f4b7d0
+7	363	7407034594844678	CMakeFiles/main.dir/main.c.obj	dcffe3d5f85a0e1
+31	507	7407010562642790	gnuplot_i/CMakeFiles/gnuplot_i.dir/src/gnuplot_i.c.obj	174768bfa03cf579
+106	206	7406983184923649	phasorfilters/phasorfilters.lib	c8c623bfb341a78d
+2	35	0	clean	8c45b54705a541e8
+509	836	7407010565202267	gnuplot_i/gnuplot_i.lib	40fd50c31f09874a
+533	1365	7407034603139602	main.exe	4c085d36c7134095
