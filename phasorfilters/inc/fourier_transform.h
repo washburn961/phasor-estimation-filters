@@ -3,23 +3,22 @@
 
 #define _USE_MATH_DEFINES
 
-#include "phasor_filters_conf.h"
 #include <complex.h>
 #include <math.h>
 #include <stdint.h>
 
 typedef struct
 {
-    float real[DFT_SIZE];
-    float imag[DFT_SIZE];
-    float sin[DFT_SIZE * DFT_SIZE];
-    float cos[DFT_SIZE * DFT_SIZE];
-} FourierTransform;
+    float* real;
+    float* imag;
+    float* sin;
+    float* cos;
+    uint32_t size;
+} fourier_transform;
 
-void FourierTransform_Init(FourierTransform* fourierTransform);
-void FourierTransform_Evaluate(FourierTransform* fourierTransform, float* input, uint32_t inputSize);
-float FourierTransform_GetMag(FourierTransform* fourierTransform, uint32_t index);
-float FourierTransform_GetPhase(FourierTransform* fourierTransform, uint32_t index);
-void FourierTransform_GetMagBin(FourierTransform* fourierTransform, float* out_magBin);
+uint32_t dft_init(fourier_transform* transform);
+uint32_t dft_step(fourier_transform* transform, float* input);
+uint32_t dft_get_magnitude(fourier_transform* transform, float* out_magnitude, uint32_t index);
+uint32_t dft_get_phase(fourier_transform* transform, float* out_phase, uint32_t index);
 
 #endif

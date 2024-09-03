@@ -6,7 +6,7 @@
 #include "ring_buffer.h"
 
 SlidingBuffer buffer;
-FourierTransform dft;
+dft dft;
 
 int main(void) {
 
