@@ -1,57 +1,53 @@
 #include "ring_buffer.h"
 
-void SlidingBuffer_Init(SlidingBuffer* buffer)
-{
+// Initializes the ring buffer (assumes content is already allocated)
+uint32_t ring_buffer_init(ring_buffer* buffer) {
     buffer->head = 0;
     buffer->tail = 0;
-    buffer->isFull = 0;
+    buffer->is_full = 0;
 
-    for (int i = 0; i < BUFFER_SIZE; ++i) {
+    for (uint32_t i = 0; i < buffer->size; i++) {
         buffer->content[i] = 0;
     }
+
+    return 0;
 }
 
-void SlidingBuffer_Write(SlidingBuffer* buffer, float data)
-{
-    buffer->content[buffer->tail] = data;
-    buffer->head = (buffer->head + 1) % BUFFER_SIZE;
-    buffer->tail = (buffer->tail + 1) % BUFFER_SIZE;
-    buffer->isFull = buffer->tail == buffer->head;
+// Writes data to the ring buffer
+uint32_t ring_buffer_write(ring_buffer* buffer, float data) {
+    buffer->content[buffer->head] = data;
+    buffer->head = (buffer->head + 1) % buffer->size;
+
+    if (buffer->is_full) {
+        buffer->tail = (buffer->tail + 1) % buffer->size;
+    }
+
+    buffer->is_full = (buffer->head == buffer->tail);
+
+    return 0;
 }
 
-// float SlidingBuffer_Read(SlidingBuffer* buffer, uint32_t index)
-// {
-//     uint32_t actualIndex = (buffer->head + index) % BUFFER_SIZE;
-//     return buffer->content[actualIndex];
-// }
-
-float SlidingBuffer_Read(SlidingBuffer* buffer, uint32_t index) {
-    // Calculate actual index relative to tail, moving backwards
-    uint32_t actualIndex;
-    if (index <= buffer->tail) {
-        actualIndex = buffer->tail - index - 1;
-    }
-    else {
-        actualIndex = BUFFER_SIZE + buffer->tail - index - 1;
+// Reads data from the ring buffer at a specified index
+uint32_t ring_buffer_read(ring_buffer* buffer, float* out_data, uint32_t index) {
+    if (!buffer->is_full && index >= buffer->head) {
+        return 1; // Error: Trying to read more data than available
     }
 
-    return buffer->content[actualIndex % BUFFER_SIZE];
+    uint32_t actual_index = (buffer->head + buffer->size - index - 1) % buffer->size;
+    *out_data = buffer->content[actual_index];
+
+    return 0;
 }
 
-
-// void SlidingBuffer_GetSamples(SlidingBuffer* buffer, float* out, uint32_t outSize)
-// {
-//     for (uint32_t i = BUFFER_SIZE - outSize; i < BUFFER_SIZE; i++)
-//     {
-//         out[i] = SlidingBuffer_Read(buffer, i);
-//     }
-// }
-
-void SlidingBuffer_GetSamples(SlidingBuffer* buffer, float* out, uint32_t outSize) {
-    if (outSize > BUFFER_SIZE) outSize = BUFFER_SIZE; // Limit to buffer size
-
-    for (uint32_t i = 0; i < outSize; ++i) {
-        // Use the updated SlidingBuffer_Read to fetch samples in reverse order
-        out[i] = SlidingBuffer_Read(buffer, outSize - i - 1);
+// Reads multiple elements from the ring buffer
+uint32_t ring_buffer_read_many(ring_buffer* buffer, float* out_data, uint32_t out_size) {
+    if (out_size > buffer->size || (!buffer->is_full && out_size > buffer->head)) {
+        return 1; // Error: Trying to read more data than available
     }
+
+    for (uint32_t i = 0; i < out_size; i++) {
+        ring_buffer_read(buffer, &out_data[i], i);
+    }
+
+    return 0;
 }

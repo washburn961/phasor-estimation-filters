@@ -5,7 +5,7 @@
 #include "fourier_transform.h"
 #include "ring_buffer.h"
 
-SlidingBuffer buffer;
+ring_buffer buffer;
 dft dft;
 
 int main(void) {
