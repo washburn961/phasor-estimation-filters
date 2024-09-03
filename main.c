@@ -1,45 +1,35 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include "gnuplot_i.h"
-#include "fault_data.h"
-#include "fourier_transform.h"
 #include "ring_buffer.h"
 
-ring_buffer buffer;
-dft dft;
+// Define buffer content and initialize ring buffer structure
+float buffer_content[8] = { 0 };
+ring_buffer buffer = {
+    .size = 8,
+    .content = buffer_content
+};
+
+void print_buffer(ring_buffer* buffer) {
+    float out_data[8];
+    uint32_t out_size = buffer->is_full ? buffer->size : buffer->head;
+
+    ring_buffer_read_many(buffer, out_data, out_size);
+
+    for (uint32_t i = 0; i < out_size; i++) {
+        printf("%0.0f ", out_data[i]);
+    }
+    printf("\n");
+}
 
 int main(void) {
+    // Initialize the ring buffer
+    ring_buffer_init(&buffer);
 
-    SlidingBuffer_Init(&buffer);
-    FourierTransform_Init(&dft);
-
-    // Define two vectors (arrays) of data
-    int n = sizeof(phase_a) / sizeof(phase_a[0]);
-    float* x = (float*)malloc(n * sizeof(float));
-    float* mag = (float*)malloc(n * sizeof(float));
-    float samples[DFT_SIZE] = {0};
-
-    if (x == NULL) { return; }
-    if (mag == NULL) { return; }
-
-    for (int i = 0; i < n; i++)
-    {
-        x[i] = (float)i;
-
-        SlidingBuffer_Write(&buffer, phase_b[i]);
-        SlidingBuffer_GetSamples(&buffer, samples, DFT_SIZE);
-        FourierTransform_Evaluate(&dft, samples, DFT_SIZE);
-
-        mag[i] = FourierTransform_GetMag(&dft, 1);
+    // Write data from 1 to 32 into the ring buffer
+    for (int i = 1; i <= 32; i++) {
+        ring_buffer_write(&buffer, (float)i);
+        printf("After writing %d: ", i);
+        print_buffer(&buffer);
     }
-
-    // Use the new function to plot and open the result
-    gnuplot_plot_xy(x, phase_b, n, "Time domain", "vector_plot.png");
-    gnuplot_plot_xy(x, mag, n, "Phasor magnitude", "other_plot.png");
-    //gnuplot_plot_xy(x, phase_b, n, "Vector Plot", "vector_plot.png");
-    //gnuplot_plot_xy(x, phase_c, n, "Vector Plot", "vector_plot.png");
-
-    free(x);
 
     return 0;
 }
